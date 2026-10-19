@@ -1,2 +1,3 @@
+https://pajh107171.github.io/-Life-Assistant/
 # -Life-Assistant
 可以幫助學生管理每天的課程、待辦事項、讀書時間和生活安排。
