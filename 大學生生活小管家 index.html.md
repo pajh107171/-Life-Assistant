@@ -1,0 +1,982 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大學生生活小管家</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background: #f6f7fb;
+            color: #333;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+
+        body.dark {
+            background: #181a20;
+            color: #eee;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px 0 50px;
+        }
+
+        /* 標題區 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .title h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .title p {
+            color: #777;
+        }
+
+        body.dark .title p {
+            color: #aaa;
+        }
+
+        .dark-btn {
+            border: none;
+            background: #333;
+            color: white;
+            padding: 11px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .dark-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* 日期 */
+        .date-box {
+            background: linear-gradient(135deg, #8b7cf6, #a995ff);
+            color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(120, 100, 220, 0.2);
+        }
+
+        .date-box h2 {
+            margin-bottom: 5px;
+        }
+
+        /* 卡片網格 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        body.dark .card {
+            background: #23262e;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* 輸入區 */
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 11px 13px;
+            font-size: 15px;
+            outline: none;
+            background: white;
+            color: #333;
+        }
+
+        input:focus {
+            border-color: #8b7cf6;
+        }
+
+        body.dark input {
+            background: #30333c;
+            border-color: #444;
+            color: white;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 12px;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .add-btn {
+            background: #8b7cf6;
+            color: white;
+        }
+
+        /* 行程與待辦 */
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #f6f7fb;
+        }
+
+        body.dark .list-item {
+            background: #30333c;
+        }
+
+        .item-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .item-content span {
+            word-break: break-word;
+        }
+
+        .delete-btn {
+            background: #ff6b81;
+            color: white;
+            padding: 7px 10px;
+        }
+
+        .complete {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .todo-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+
+        /* 完成度 */
+        .progress-box {
+            margin-top: 15px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 10px;
+            background: #e8e8ee;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        body.dark .progress {
+            background: #444;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #8b7cf6;
+            border-radius: 20px;
+            transition: width 0.4s;
+        }
+
+        /* 番茄鐘 */
+        .pomodoro {
+            text-align: center;
+        }
+
+        .mode {
+            display: inline-block;
+            background: #eeeaff;
+            color: #6e5bd8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        body.dark .mode {
+            background: #383250;
+            color: #c4baff;
+        }
+
+        .timer {
+            font-size: 58px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 10px 0 20px;
+        }
+
+        .timer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .start {
+            background: #7cce9a;
+            color: white;
+        }
+
+        .pause {
+            background: #f0ad4e;
+            color: white;
+        }
+
+        .reset {
+            background: #777;
+            color: white;
+        }
+
+        /* 今天吃什麼 */
+        .food-box {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .food-result {
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .food-btn {
+            background: #ff9f68;
+            color: white;
+            padding: 12px 22px;
+            font-size: 15px;
+        }
+
+        /* RWD */
+        @media (max-width: 700px) {
+            .container {
+                width: 94%;
+                padding-top: 20px;
+            }
+
+            header {
+                align-items: flex-start;
+            }
+
+            .title h1 {
+                font-size: 25px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            header {
+                flex-direction: column;
+            }
+
+            .dark-btn {
+                align-self: flex-end;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- 標題 -->
+    <header>
+        <div class="title">
+            <h1>🎓 大學生生活小管家</h1>
+            <p>幫你整理今天的生活，讓每天都更有條理 ✨</p>
+        </div>
+
+        <button class="dark-btn" id="darkModeBtn">
+            🌙 深色模式
+        </button>
+    </header>
+
+    <!-- 日期 -->
+    <div class="date-box">
+        <h2 id="todayDate">今天</h2>
+        <p id="todayWeek"></p>
+    </div>
+
+    <div class="grid">
+
+        <!-- 今日行程 -->
+        <div class="card">
+            <h2>📅 今日行程</h2>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="scheduleInput"
+                    placeholder="例如：14:00 資料庫系統"
+                >
+                <button class="add-btn" id="addSchedule">
+                    新增
+                </button>
+            </div>
+
+            <div class="list" id="scheduleList"></div>
+        </div>
+
+        <!-- 待辦事項 -->
+        <div class="card">
+            <h2>✅ 待辦事項</h2>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="todoInput"
+                    placeholder="輸入待辦事項"
+                >
+                <button class="add-btn" id="addTodo">
+                    新增
+                </button>
+            </div>
+
+            <div class="list" id="todoList"></div>
+
+            <div class="progress-box">
+                <div class="progress-info">
+                    <span>完成進度</span>
+                    <strong id="progressText">0%</strong>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 番茄鐘 -->
+        <div class="card pomodoro">
+            <h2>🍅 讀書番茄鐘</h2>
+
+            <div class="mode" id="timerMode">
+                📚 讀書時間
+            </div>
+
+            <div class="timer" id="timer">
+                25:00
+            </div>
+
+            <div class="timer-buttons">
+                <button class="start" id="startTimer">
+                    ▶ 開始
+                </button>
+
+                <button class="pause" id="pauseTimer">
+                    ⏸ 暫停
+                </button>
+
+                <button class="reset" id="resetTimer">
+                    ↻ 重設
+                </button>
+            </div>
+
+            <p style="margin-top:15px;color:#888;font-size:13px;">
+                25 分鐘讀書 → 5 分鐘休息
+            </p>
+        </div>
+
+        <!-- 今天吃什麼 -->
+        <div class="card food-box">
+            <h2>🍔 今天吃什麼？</h2>
+
+            <div class="food-result" id="foodResult">
+                今天吃什麼好呢？
+            </div>
+
+            <button class="food-btn" id="foodBtn">
+                🎲 幫我決定！
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       日期
+    ========================= */
+
+    const today = new Date();
+
+    const weekDays = [
+        "星期日",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六"
+    ];
+
+    document.getElementById("todayDate").textContent =
+        `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${today.getDate()} 日`;
+
+    document.getElementById("todayWeek").textContent =
+        weekDays[today.getDay()];
+
+
+    /* =========================
+       今日行程
+    ========================= */
+
+    const scheduleInput =
+        document.getElementById("scheduleInput");
+
+    const scheduleList =
+        document.getElementById("scheduleList");
+
+    const addSchedule =
+        document.getElementById("addSchedule");
+
+
+    function createSchedule(text) {
+
+        const item = document.createElement("div");
+
+        item.className = "list-item";
+
+        item.innerHTML = `
+            <div class="item-content">
+                <span>📌 ${text}</span>
+            </div>
+
+            <button class="delete-btn">
+                刪除
+            </button>
+        `;
+
+        item.querySelector(".delete-btn")
+            .addEventListener("click", function () {
+
+                item.remove();
+
+            });
+
+        scheduleList.appendChild(item);
+    }
+
+
+    function addNewSchedule() {
+
+        const text = scheduleInput.value.trim();
+
+        if (text === "") {
+            alert("請先輸入行程！");
+            return;
+        }
+
+        createSchedule(text);
+
+        scheduleInput.value = "";
+
+        scheduleInput.focus();
+    }
+
+
+    addSchedule.addEventListener(
+        "click",
+        addNewSchedule
+    );
+
+
+    scheduleInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+                addNewSchedule();
+            }
+
+        }
+    );
+
+
+    /* =========================
+       待辦事項
+    ========================= */
+
+    const todoInput =
+        document.getElementById("todoInput");
+
+    const todoList =
+        document.getElementById("todoList");
+
+    const addTodo =
+        document.getElementById("addTodo");
+
+    const progressText =
+        document.getElementById("progressText");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+
+    function updateProgress() {
+
+        const todos =
+            todoList.querySelectorAll(".list-item");
+
+        const completed =
+            todoList.querySelectorAll(
+                ".todo-checkbox:checked"
+            );
+
+        if (todos.length === 0) {
+
+            progressText.textContent = "0%";
+            progressBar.style.width = "0%";
+
+            return;
+        }
+
+        const percent =
+            Math.round(
+                completed.length / todos.length * 100
+            );
+
+        progressText.textContent =
+            percent + "%";
+
+        progressBar.style.width =
+            percent + "%";
+    }
+
+
+    function createTodo(text) {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "list-item";
+
+        item.innerHTML = `
+            <div class="item-content">
+
+                <input
+                    type="checkbox"
+                    class="todo-checkbox"
+                >
+
+                <span>${text}</span>
+
+            </div>
+
+            <button class="delete-btn">
+                刪除
+            </button>
+        `;
+
+
+        const checkbox =
+            item.querySelector(".todo-checkbox");
+
+        const textElement =
+            item.querySelector("span");
+
+
+        checkbox.addEventListener(
+            "change",
+            function () {
+
+                if (checkbox.checked) {
+
+                    textElement.classList.add(
+                        "complete"
+                    );
+
+                } else {
+
+                    textElement.classList.remove(
+                        "complete"
+                    );
+
+                }
+
+                updateProgress();
+
+            }
+        );
+
+
+        item.querySelector(".delete-btn")
+            .addEventListener(
+                "click",
+                function () {
+
+                    item.remove();
+
+                    updateProgress();
+
+                }
+            );
+
+
+        todoList.appendChild(item);
+
+        updateProgress();
+    }
+
+
+    function addNewTodo() {
+
+        const text =
+            todoInput.value.trim();
+
+        if (text === "") {
+
+            alert("請輸入待辦事項！");
+
+            return;
+        }
+
+        createTodo(text);
+
+        todoInput.value = "";
+
+        todoInput.focus();
+    }
+
+
+    addTodo.addEventListener(
+        "click",
+        addNewTodo
+    );
+
+
+    todoInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+                addNewTodo();
+            }
+
+        }
+    );
+
+
+    /* =========================
+       預設待辦
+    ========================= */
+
+    createTodo("完成今天的作業");
+    createTodo("複習今天上課內容");
+
+
+    /* =========================
+       番茄鐘
+    ========================= */
+
+    const timer =
+        document.getElementById("timer");
+
+    const timerMode =
+        document.getElementById("timerMode");
+
+    const startTimer =
+        document.getElementById("startTimer");
+
+    const pauseTimer =
+        document.getElementById("pauseTimer");
+
+    const resetTimer =
+        document.getElementById("resetTimer");
+
+
+    let totalSeconds = 25 * 60;
+
+    let timerInterval = null;
+
+    let isStudyTime = true;
+
+
+    function updateTimerDisplay() {
+
+        const minutes =
+            Math.floor(totalSeconds / 60);
+
+        const seconds =
+            totalSeconds % 60;
+
+        timer.textContent =
+            String(minutes).padStart(2, "0")
+            + ":"
+            + String(seconds).padStart(2, "0");
+    }
+
+
+    function startPomodoro() {
+
+        if (timerInterval !== null) {
+            return;
+        }
+
+        timerInterval =
+            setInterval(function () {
+
+                if (totalSeconds > 0) {
+
+                    totalSeconds--;
+
+                    updateTimerDisplay();
+
+                } else {
+
+                    switchTimerMode();
+
+                }
+
+            }, 1000);
+    }
+
+
+    function pausePomodoro() {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+    }
+
+
+    function resetPomodoro() {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+
+        isStudyTime = true;
+
+        totalSeconds = 25 * 60;
+
+        timerMode.textContent =
+            "📚 讀書時間";
+
+        updateTimerDisplay();
+    }
+
+
+    function switchTimerMode() {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+
+        if (isStudyTime) {
+
+            isStudyTime = false;
+
+            totalSeconds = 5 * 60;
+
+            timerMode.textContent =
+                "☕ 休息時間";
+
+        } else {
+
+            isStudyTime = true;
+
+            totalSeconds = 25 * 60;
+
+            timerMode.textContent =
+                "📚 讀書時間";
+        }
+
+        updateTimerDisplay();
+
+        startPomodoro();
+    }
+
+
+    startTimer.addEventListener(
+        "click",
+        startPomodoro
+    );
+
+    pauseTimer.addEventListener(
+        "click",
+        pausePomodoro
+    );
+
+    resetTimer.addEventListener(
+        "click",
+        resetPomodoro
+    );
+
+
+    updateTimerDisplay();
+
+
+    /* =========================
+       今天吃什麼
+    ========================= */
+
+    const foods = [
+
+        "🍜 牛肉麵",
+        "🍱 雞腿便當",
+        "🍛 咖哩飯",
+        "🍔 漢堡",
+        "🍕 披薩",
+        "🍣 壽司",
+        "🥟 水餃",
+        "🍗 炸雞",
+        "🌮 墨西哥捲餅",
+        "🍝 義大利麵",
+        "🥗 沙拉",
+        "🍙 飯糰",
+        "🍳 蛋餅",
+        "🍲 火鍋",
+        "🍜 拉麵",
+        "🥪 三明治"
+    ];
+
+
+    const foodResult =
+        document.getElementById("foodResult");
+
+    const foodBtn =
+        document.getElementById("foodBtn");
+
+
+    foodBtn.addEventListener(
+        "click",
+        function () {
+
+            const randomIndex =
+                Math.floor(
+                    Math.random() * foods.length
+                );
+
+            foodResult.textContent =
+                foods[randomIndex];
+
+        }
+    );
+
+
+    /* =========================
+       深色模式
+    ========================= */
+
+    const darkModeBtn =
+        document.getElementById("darkModeBtn");
+
+
+    darkModeBtn.addEventListener(
+        "click",
+        function () {
+
+            document.body.classList.toggle("dark");
+
+            if (
+                document.body.classList.contains("dark")
+            ) {
+
+                darkModeBtn.textContent =
+                    "☀️ 淺色模式";
+
+            } else {
+
+                darkModeBtn.textContent =
+                    "🌙 深色模式";
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
+```
